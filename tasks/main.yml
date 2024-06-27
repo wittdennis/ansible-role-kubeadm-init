@@ -1,2 +1,48 @@
 ---
-# tasks file for role_remplate
+- name: Check if Kubernetes has already been initialized
+  ansible.builtin.stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubernetes_init
+
+- name: Deploy config file for kubeadm
+  ansible.builtin.template:
+    src: "kubeadm-config.yaml.j2"
+    dest: /tmp/kubeadm-config.yaml
+    mode: "0644"
+  when: not kubernetes_init.stat.exists
+
+- name: Init Kubernetes cluster
+  ansible.builtin.command:
+    cmd: >
+      kubeadm init
+      --config /tmp/kubeadm-config.yaml
+      --upload-certs
+  when: not kubernetes_init.stat.exists
+  register: kubeadm_init
+  changed_when: "'Your Kubernetes control-plane has initialized successfully!' in kubeadm_init.stdout"
+
+- name: Delete kubeadm config
+  ansible.builtin.file:
+    path: /tmp/kubeadm-config.yaml
+    state: absent
+
+- name: Print the init output to screen.
+  ansible.builtin.debug:
+    var: kubeadm_init.stdout
+    verbosity: 2
+  when: not kubernetes_init.stat.exists
+
+- name: Ensure .kube directory exists.
+  ansible.builtin.file:
+    path: ~/.kube
+    state: directory
+    mode: "0755"
+  when: not kubernetes_init.stat.exists
+
+- name: Symlink the kubectl admin.conf to ~/.kube/conf.
+  ansible.builtin.file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+    mode: "0644"
+  when: not kubernetes_init.stat.exists
