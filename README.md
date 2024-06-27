@@ -1,38 +1,65 @@
-Role Name
-=========
+# kubeadm_init
 
-A brief description of the role goes here.
+Initializes a Kubernetes cluster with kubeadm
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Requires kubeadm to be installed on the system
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```yaml
+kubeadm_init_apiserver_bind_port: 443 # Port where the apiserver is listening on
+kubeadm_init_pod_network_cidr: "10.128.0.0/16" # Pod netword cidr range
 
-Dependencies
-------------
+# The above values only work while not overriding the following variables
+kubeadm_init_init_configuration: see: https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+kubeadm_init_cluster_configuration: see: https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/
 
-Example Playbook
-----------------
+kubeadm_init_kubelet_configuration: see: https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+kubeadm_init_kube_proxy_configuration: see: https://kubernetes.io/docs/reference/config-api/kubeadm-config.v1beta3/
+```
 
-    - hosts: servers
+Default values:
+
+```yaml
+---
+kubeadm_init_apiserver_bind_port: 443
+kubeadm_init_pod_network_cidr: "10.128.0.0/16"
+
+kubeadm_init_init_configuration:
+  localAPIEndpoint:
+    advertiseAddress: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+    bindPort: "{{ kubeadm_init_apiserver_bind_port }}"
+
+kubeadm_init_cluster_configuration:
+  networking:
+    podSubnet: "{{ kubeadm_init_pod_network_cidr }}"
+  kubernetesVersion: "{{ kubeadm_init_version }}"
+  apiServer:
+    certSANs:
+      - "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+  controllerManager:
+    extraArgs:
+      bind-address: "0.0.0.0"
+  scheduler:
+    extraArgs:
+      bind-address: "0.0.0.0"
+
+kubeadm_init_kubelet_configuration:
+  cgroupDriver: "systemd"
+
+kubeadm_init_kube_proxy_configuration: {}
+```
+
+## Example Playbook
+
+    - hosts: control_plane
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: wittdennis.kubeadm_init }
 
-License
--------
+## License
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+MIT

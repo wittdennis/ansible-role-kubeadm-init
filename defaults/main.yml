@@ -1,2 +1,27 @@
 ---
-# defaults file for role_remplate
+kubeadm_init_apiserver_bind_port: 443
+kubeadm_init_pod_network_cidr: "10.128.0.0/16"
+
+kubeadm_init_init_configuration:
+  localAPIEndpoint:
+    advertiseAddress: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+    bindPort: "{{ kubeadm_init_apiserver_bind_port }}"
+
+kubeadm_init_cluster_configuration:
+  networking:
+    podSubnet: "{{ kubeadm_init_pod_network_cidr }}"
+  kubernetesVersion: "{{ kubeadm_init_version }}"
+  apiServer:
+    certSANs:
+      - "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+  controllerManager:
+    extraArgs:
+      bind-address: "0.0.0.0"
+  scheduler:
+    extraArgs:
+      bind-address: "0.0.0.0"
+
+kubeadm_init_kubelet_configuration:
+  cgroupDriver: "systemd"
+
+kubeadm_init_kube_proxy_configuration: {}

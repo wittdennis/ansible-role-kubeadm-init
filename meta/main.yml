@@ -1,9 +1,13 @@
 galaxy_info:
   author: Dennis Witt
-  description: your role description
+  description: Initializes a kubernetes cluster with kubeadm
   namespace: wittdennis
-  role_name: template_role
+  role_name: kubeadm_init
   license: MIT
+  platforms:
+    - name: GenericLinux
+      versions:
+        - all
 
   min_ansible_version: "2.1"
 
@@ -11,7 +15,7 @@ galaxy_info:
   # min_ansible_container_version:
 
   galaxy_tags:
-    []
+    [kubeadm, kubernetes]
     # List tags for your role here, one per line. A tag is a keyword that describes
     # and categorizes the role. Users find roles by searching for tags. Be sure to
     # remove the '[]' above, if you add tags to this list.
