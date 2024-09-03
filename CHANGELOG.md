@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [1.0.2](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/9ea3fabf09b45f7252db708963417cf5a4650bcd..1.0.2) - 2024-09-03
+#### Bug Fixes
+- update kubeadm config to v1beta4 - ([b7ea46c](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/b7ea46c20b2e73af13d75a6353545a0263810578)) - Dennis Witt
+#### Miscellaneous Chores
+- **(deps)** update softprops/action-gh-release action to v2.0.8 - ([c82ef42](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/c82ef4261e391a34a6fbaa8fe68f4395f849a842)) - wittdennis-renovate[bot]
+- **(deps)** update softprops/action-gh-release action to v2.0.7 - ([a3159b0](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/a3159b0900c7ff58bf3fec5870e1e1066251f833)) - wittdennis-renovate[bot]
+- **(deps)** update ansible/ansible-lint action to v24.7.0 - ([9ea3fab](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/9ea3fabf09b45f7252db708963417cf5a4650bcd)) - wittdennis-renovate[bot]
+
+- - -
+
 ## [1.0.1](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/73c8cb6aad59484cf36260a57190291f635ec92a..1.0.1) - 2024-06-29
 #### Bug Fixes
 - set tag for ansible galaxy - ([9bd01c5](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/9bd01c5069579f0872b2468a431ed6a34b8d43fc)) - Dennis Witt
