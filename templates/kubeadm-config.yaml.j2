@@ -1,9 +1,9 @@
 ---
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 kind: InitConfiguration
 {{ kubeadm_init_init_configuration | to_nice_yaml }}
 ---
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 kind: ClusterConfiguration
 {{ kubeadm_init_cluster_configuration | to_nice_yaml }}
 {% if kubeadm_init_kubelet_configuration|length > 0 %}
