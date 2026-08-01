@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [1.1.1](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/77b30c5f730f222ada667a7b858a0e33cf4421f7..1.1.1) - 2026-08-01
+#### Bug Fixes
+- kubeernetes api update - ([77b30c5](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/77b30c5f730f222ada667a7b858a0e33cf4421f7)) - Dennis Witt
+
+- - -
+
 ## [1.1.0](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/56164cf5362bda87a449fa1225b549ac8fb8a2dd..1.1.0) - 2026-08-01
 #### Features
 - reconcile config changes - ([3b83c39](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/3b83c3992ee2ae9b0d0fbd515c47bbb3a31d2251)) - Dennis Witt
