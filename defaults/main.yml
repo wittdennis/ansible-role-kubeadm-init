@@ -12,7 +12,7 @@ kubeadm_init_reconcile: true
 
 kubeadm_init_init_configuration:
   localAPIEndpoint:
-    advertiseAddress: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+    advertiseAddress: "{{ ansible_facts['all_ipv4_addresses'] | ansible.utils.ipaddr('private') | first }}"
     bindPort: "{{ kubeadm_init_apiserver_bind_port }}"
 
 kubeadm_init_cluster_configuration:
@@ -21,13 +21,15 @@ kubeadm_init_cluster_configuration:
   kubernetesVersion: "{{ kubeadm_init_version }}"
   apiServer:
     certSANs:
-      - "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
+      - "{{ ansible_facts['all_ipv4_addresses'] | ansible.utils.ipaddr('private') | first }}"
   controllerManager:
     extraArgs:
-      bind-address: "0.0.0.0"
+      - name: bind-address
+        value: "0.0.0.0"
   scheduler:
     extraArgs:
-      bind-address: "0.0.0.0"
+      - name: bind-address
+        value: "0.0.0.0"
 
 kubeadm_init_kubelet_configuration:
   cgroupDriver: "systemd"
