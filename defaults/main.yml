@@ -2,6 +2,14 @@
 kubeadm_init_apiserver_bind_port: 443
 kubeadm_init_pod_network_cidr: "10.128.0.0/16"
 
+# Path where the rendered kubeadm config is kept. Persisted so config drift can
+# be detected and reconciled on already-initialized clusters.
+kubeadm_init_config_path: /etc/kubernetes/kubeadm-config.yaml
+
+# Reconcile control plane config drift on already-initialized clusters by
+# re-uploading the config and regenerating the static pod manifests.
+kubeadm_init_reconcile: true
+
 kubeadm_init_init_configuration:
   localAPIEndpoint:
     advertiseAddress: "{{ ansible_all_ipv4_addresses | ansible.utils.ipaddr('private') | first }}"
