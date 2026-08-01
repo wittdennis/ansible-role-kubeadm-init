@@ -2,42 +2,58 @@
 - name: Check if Kubernetes has already been initialized
   ansible.builtin.stat:
     path: /etc/kubernetes/admin.conf
-  register: kubernetes_init
+  register: kubeadm_init_admin_conf
 
 - name: Deploy config file for kubeadm
   ansible.builtin.template:
     src: "kubeadm-config.yaml.j2"
-    dest: /tmp/kubeadm-config.yaml
-    mode: "0644"
-  when: not kubernetes_init.stat.exists
+    dest: "{{ kubeadm_init_config_path }}"
+    mode: "0600"
+  register: kubeadm_init_config
 
 - name: Init Kubernetes cluster
   ansible.builtin.command:
     cmd: >
       kubeadm init
-      --config /tmp/kubeadm-config.yaml
+      --config {{ kubeadm_init_config_path }}
       --upload-certs
-  when: not kubernetes_init.stat.exists
+  when: not kubeadm_init_admin_conf.stat.exists
   register: kubeadm_init
   changed_when: "'Your Kubernetes control-plane has initialized successfully!' in kubeadm_init.stdout"
 
-- name: Delete kubeadm config
-  ansible.builtin.file:
-    path: /tmp/kubeadm-config.yaml
-    state: absent
+- name: Reconcile control plane configuration
+  when:
+    - kubeadm_init_admin_conf.stat.exists
+    - kubeadm_init_config is changed
+    - kubeadm_init_reconcile | bool
+  block:
+    - name: Upload updated cluster configuration
+      ansible.builtin.command:
+        cmd: kubeadm init phase upload-config kubeadm --config {{ kubeadm_init_config_path }}
+      changed_when: true
+
+    - name: Upload updated kubelet configuration
+      ansible.builtin.command:
+        cmd: kubeadm init phase upload-config kubelet --config {{ kubeadm_init_config_path }}
+      changed_when: true
+
+    - name: Regenerate control plane static pod manifests
+      ansible.builtin.command:
+        cmd: kubeadm init phase control-plane all --config {{ kubeadm_init_config_path }}
+      changed_when: true
 
 - name: Print the init output to screen.
   ansible.builtin.debug:
     var: kubeadm_init.stdout
     verbosity: 2
-  when: not kubernetes_init.stat.exists
+  when: not kubeadm_init_admin_conf.stat.exists
 
 - name: Ensure .kube directory exists.
   ansible.builtin.file:
     path: ~/.kube
     state: directory
     mode: "0755"
-  when: not kubernetes_init.stat.exists
+  when: not kubeadm_init_admin_conf.stat.exists
 
 - name: Symlink the kubectl admin.conf to ~/.kube/conf.
   ansible.builtin.file:
@@ -45,4 +61,4 @@
     dest: ~/.kube/config
     state: link
     mode: "0644"
-  when: not kubernetes_init.stat.exists
+  when: not kubeadm_init_admin_conf.stat.exists
