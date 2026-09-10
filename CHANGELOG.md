@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [1.2.0](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/54a92bbeec13abc73e371a34d736bb303ac63602..1.2.0) - 2026-09-10
+#### Features
+- reconcile api cert changes - ([29ba91f](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/29ba91fd552133f6805b9ffd7c6588db5a0abe60)) - Dennis Witt
+#### Continuous Integration
+- (**deps**) update wittdennis/pipelines action to v2.0.53 - ([410ec29](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/410ec29232039f2125c5b07e04d95c98ac7fb832)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.52 - ([79854ea](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/79854eaf52ec8aef1f991b3190f66e3a6ef55d64)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.50 - ([bf66b2c](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/bf66b2cc09545570f9769cc424b85ec9a8d00a96)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.49 - ([4c27a82](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/4c27a823f894125c554096882050756706e6e279)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.48 - ([dc9efc0](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/dc9efc0eec91a1a455310787c34a82b84fdb737c)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.47 - ([c2652d6](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/c2652d60a917d8374c8393a2d731d8bcdf300bcb)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.46 - ([70c1f57](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/70c1f5720f630be58666add212321a3bd10c36cd)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.45 - ([ca6f37b](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/ca6f37bfa90a938680d40845e57e99bdd8ddf979)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.44 - ([c9085a2](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/c9085a2bc60f74c16c20f53e87aa4981955ef2b8)) - wittdennis-renovate[bot]
+- (**deps**) update wittdennis/pipelines action to v2.0.43 - ([54a92bb](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/54a92bbeec13abc73e371a34d736bb303ac63602)) - wittdennis-renovate[bot]
+
+- - -
+
 ## [1.1.1](https://github.com/wittdennis/ansible-role-kubeadm-init/compare/77b30c5f730f222ada667a7b858a0e33cf4421f7..1.1.1) - 2026-08-01
 #### Bug Fixes
 - kubeernetes api update - ([77b30c5](https://github.com/wittdennis/ansible-role-kubeadm-init/commit/77b30c5f730f222ada667a7b858a0e33cf4421f7)) - Dennis Witt
