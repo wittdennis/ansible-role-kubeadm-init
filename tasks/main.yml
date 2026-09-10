@@ -42,6 +42,76 @@
         cmd: kubeadm init phase control-plane all --config {{ kubeadm_init_config_path }}
       changed_when: true
 
+    - name: Read the current apiserver serving certificate SANs
+      ansible.builtin.command:
+        cmd: openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -ext subjectAltName
+      register: kubeadm_init_apiserver_cert
+      changed_when: false
+
+    # `kubeadm init phase certs apiserver` refuses to overwrite an existing cert, so certSANs added
+    # after init never reach the serving cert. Detect the drift and regenerate only then, since a SAN
+    # change alone does not alter the static pod manifest and would otherwise never trigger a restart.
+    - name: Reconcile the apiserver serving certificate with the configured certSANs
+      vars:
+        kubeadm_init_present_sans: >-
+          {{ kubeadm_init_apiserver_cert.stdout
+             | regex_findall('(?:DNS|IP Address):([^,]+)') | map('trim') | list }}
+        kubeadm_init_missing_sans: >-
+          {{ (kubeadm_init_cluster_configuration.apiServer.certSANs | default([]) | map('string') | list)
+             | difference(kubeadm_init_present_sans) }}
+      when: kubeadm_init_missing_sans | length > 0
+      block:
+        - name: Remove the outdated apiserver serving certificate
+          ansible.builtin.file:
+            path: "/etc/kubernetes/pki/{{ item }}"
+            state: absent
+          loop:
+            - apiserver.crt
+            - apiserver.key
+
+        - name: Regenerate the apiserver serving certificate with the current certSANs
+          ansible.builtin.command:
+            cmd: kubeadm init phase certs apiserver --config {{ kubeadm_init_config_path }}
+          changed_when: true
+
+        - name: Restart kube-apiserver so it loads the regenerated certificate
+          block:
+            - name: Move the kube-apiserver static pod manifest aside
+              ansible.builtin.command:
+                cmd: mv /etc/kubernetes/manifests/kube-apiserver.yaml /etc/kubernetes/kube-apiserver.yaml.reload
+                removes: /etc/kubernetes/manifests/kube-apiserver.yaml
+              changed_when: true
+
+            - name: Wait for kube-apiserver to stop
+              ansible.builtin.wait_for:
+                host: 127.0.0.1
+                port: "{{ kubeadm_init_apiserver_bind_port }}"
+                state: stopped
+                timeout: 60
+
+            - name: Restore the kube-apiserver static pod manifest
+              ansible.builtin.command:
+                cmd: mv /etc/kubernetes/kube-apiserver.yaml.reload /etc/kubernetes/manifests/kube-apiserver.yaml
+                creates: /etc/kubernetes/manifests/kube-apiserver.yaml
+              changed_when: true
+
+            - name: Wait for kube-apiserver to become available again
+              ansible.builtin.wait_for:
+                host: 127.0.0.1
+                port: "{{ kubeadm_init_apiserver_bind_port }}"
+                state: started
+                timeout: 120
+          rescue:
+            - name: Restore the kube-apiserver static pod manifest after a failed restart
+              ansible.builtin.command:
+                cmd: mv /etc/kubernetes/kube-apiserver.yaml.reload /etc/kubernetes/manifests/kube-apiserver.yaml
+                removes: /etc/kubernetes/kube-apiserver.yaml.reload
+              changed_when: true
+
+            - name: Fail after restoring the kube-apiserver manifest
+              ansible.builtin.fail:
+                msg: kube-apiserver did not come back after regenerating its serving certificate
+
 - name: Print the init output to screen.
   ansible.builtin.debug:
     var: kubeadm_init.stdout

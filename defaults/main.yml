@@ -7,7 +7,8 @@ kubeadm_init_pod_network_cidr: "10.128.0.0/16"
 kubeadm_init_config_path: /etc/kubernetes/kubeadm-config.yaml
 
 # Reconcile control plane config drift on already-initialized clusters by
-# re-uploading the config and regenerating the static pod manifests.
+# re-uploading the config, regenerating the static pod manifests, and regenerating
+# the apiserver serving certificate when its certSANs no longer match the config.
 kubeadm_init_reconcile: true
 
 kubeadm_init_init_configuration:
